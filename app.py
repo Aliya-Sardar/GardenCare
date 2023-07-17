@@ -1,6 +1,6 @@
 from flask import Flask
 from flask import Flask, jsonify,request
-import garden_care as dc
+import garden_care as gc
 
 
 app = Flask(__name__)
@@ -30,7 +30,7 @@ def upload_file():
         }
          return jsonify(res)
      
-    predic=dc.recognize(file)
+    predic = gc.recognize(file)
     res={"message":"data retrieved successfully","data":{"disease_name":predic}}
     return res
 
