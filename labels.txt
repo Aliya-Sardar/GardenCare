@@ -1,0 +1,8 @@
+Grape___Black_rot
+Grape___healthy
+Peach___Bacterial_spot
+Peach___healthy
+Rose___Black_spot
+Rose___healthy
+Tomato___Late_blight
+Tomato___healthy
