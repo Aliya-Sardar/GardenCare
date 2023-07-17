@@ -4,7 +4,7 @@ from tensorflow.keras.models import load_model
 from tensorflow.keras.applications.resnet50 import preprocess_input
 import numpy as np
 import os
-import cv2
+#import cv2
 
 
 def recognize(file):
@@ -22,9 +22,14 @@ def recognize(file):
 
     # Load and preprocess the image
 
-    image = cv2.imdecode(np.fromstring(file.read(), np.uint8), cv2.IMREAD_COLOR)
-    image = cv2.resize(image, target_size)
-    image_array = img_to_array(image)
+    #image = cv2.imdecode(np.fromstring(file.read(), np.uint8), cv2.IMREAD_COLOR)
+    #image = cv2.resize(image, target_size)
+    #image_array = img_to_array(image)
+
+    image = tf.image.decode_jpeg(file.read(), channels=3)  # Assuming RGB image
+    image = tf.image.resize(image, target_size)
+    image_array = tf.keras.preprocessing.image.img_to_array(image)
+
     image_array = np.expand_dims(image_array, axis=0)
     image_array = preprocess_input(image_array)
 
