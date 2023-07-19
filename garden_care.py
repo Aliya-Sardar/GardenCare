@@ -1,35 +1,46 @@
 import tensorflow as tf
+from tensorflow.keras.preprocessing.image import img_to_array
+from tensorflow.keras.models import load_model
+from tensorflow.keras.applications.resnet50 import preprocess_input
 import numpy as np
 import os
 
-def recognize(base64_image_data):
+def recognize(file):
     class_names = ['Grape___Black_rot', 'Grape___healthy', 'Peach___Bacterial_spot', 'Peach___healthy',
                    'Rose___Black_spot', 'Rose___healthy', 'Tomato___Late_blight', 'Tomato___healthy']
 
-    # Load the h5 model and allocate tensors.
+    # Load the TFLite model and allocate tensors.
     directory_path = os.path.dirname(__file__)
-    file_path = os.path.join(directory_path, 'Resnet50.h5')
-    model = tf.keras.models.load_model(file_path)
+    file_path = os.path.join(directory_path, 'Resnet50.tflite')
+    interpreter = tf.lite.Interpreter(model_path=file_path)
+    interpreter.allocate_tensors()
 
     # Define the target image size
     target_size = (224, 224)
 
-    # Decode the base64 image data and convert it to a TensorFlow tensor
-    decoded_image = tf.io.decode_base64(base64_image_data)
+    # Convert the FileStorage object to a NumPy array
+    image = Image.open(file)
+    image_array = np.array(image)
 
-    # Decode the image using tf.io.decode_image
-    image = tf.io.decode_image(decoded_image, channels=3)  # Set channels=1 for grayscale images
+    # Resize and preprocess the image
+    image_array = tf.image.resize(image_array, target_size)
+    image_array = img_to_array(image_array)
+    image_array = np.expand_dims(image_array, axis=0)
+    image_array = preprocess_input(image_array)
 
-    # Resize the image to the target size
-    image = tf.image.resize(image, target_size)
+    # Get input and output details of the TFLite model
+    input_details = interpreter.get_input_details()
+    output_details = interpreter.get_output_details()
 
-    # Expand the image dimensions to create a batch of size 1 and preprocess it
-    image = tf.expand_dims(image, axis=0)
-    image_array = tf.keras.applications.resnet50.preprocess_input(image)
+    # Set the input tensor to the image data
+    interpreter.set_tensor(input_details[0]['index'], image_array)
 
-    # Make predictions on the image
-    predictions = model.predict(image_array)
-    predicted_class_index = np.argmax(predictions[0])
+    # Run the inference
+    interpreter.invoke()
+
+    # Get the output tensor and predicted class index
+    output_tensor = interpreter.get_tensor(output_details[0]['index'])
+    predicted_class_index = np.argmax(output_tensor[0])
 
     # Print the predicted class index
     print("Predicted Class Index:", predicted_class_index)
