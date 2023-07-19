@@ -4,6 +4,7 @@ from tensorflow.keras.models import load_model
 from tensorflow.keras.applications.resnet50 import preprocess_input
 import numpy as np
 import os
+from PIL import Image
 
 def recognize(file):
     class_names = ['Grape___Black_rot', 'Grape___healthy', 'Peach___Bacterial_spot', 'Peach___healthy',
