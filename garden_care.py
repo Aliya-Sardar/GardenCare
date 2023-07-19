@@ -1,17 +1,15 @@
 import tensorflow as tf
-from tensorflow.keras.preprocessing.image import load_img, img_to_array
+from tensorflow.keras.preprocessing.image import img_to_array
 from tensorflow.keras.models import load_model
 from tensorflow.keras.applications.resnet50 import preprocess_input
 import numpy as np
 import os
-#import cv2
+import base64
 
-
-def recognize(file):
+def recognize(base64_image_data):
     class_names = ['Grape___Black_rot', 'Grape___healthy', 'Peach___Bacterial_spot', 'Peach___healthy',
-               'Rose___Black_spot', 'Rose___healthy', 'Tomato___Late_blight', 'Tomato___healthy']
+                   'Rose___Black_spot', 'Rose___healthy', 'Tomato___Late_blight', 'Tomato___healthy']
 
-    
     # Load the h5 model and allocate tensors.
     directory_path = os.path.dirname(__file__)
     file_path = os.path.join(directory_path, 'Resnet50.h5')
@@ -20,19 +18,19 @@ def recognize(file):
     # Define the target image size
     target_size = (224, 224)
 
-    # Load and preprocess the image
+    # Decode the base64 image data and convert it to a NumPy array
+    decoded_image = base64.b64decode(base64_image_data)
+    image_array = np.frombuffer(decoded_image, dtype=np.uint8)
 
-    #image = cv2.imdecode(np.fromstring(file.read(), np.uint8), cv2.IMREAD_COLOR)
-    #image = cv2.resize(image, target_size)
-    #image_array = img_to_array(image)
+    # Convert the image data to a NumPy array and reshape it to the target size
+    image_array = np.reshape(image_array, target_size + (3,))
 
-    image = load_img(file_path, target_size=(224, 224))
-    image = img_to_array(image)
-    image = np.expand_dims(image, axis=0)
-    image = preprocess_input(image)
+    # Expand the image array to create a batch of size 1 and preprocess it
+    image_array = np.expand_dims(image_array, axis=0)
+    image_array = preprocess_input(image_array)
 
     # Make predictions on the image
-    predictions = model.predict(image)
+    predictions = model.predict(image_array)
     predicted_class_index = np.argmax(predictions[0])
 
     # Print the predicted class index
