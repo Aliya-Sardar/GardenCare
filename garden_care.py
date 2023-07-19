@@ -1,5 +1,6 @@
 import tensorflow as tf
 import numpy as np
+import os
 
 def recognize(base64_image_data):
     class_names = ['Grape___Black_rot', 'Grape___healthy', 'Peach___Bacterial_spot', 'Peach___healthy',
