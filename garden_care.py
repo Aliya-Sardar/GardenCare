@@ -26,15 +26,13 @@ def recognize(file):
     #image = cv2.resize(image, target_size)
     #image_array = img_to_array(image)
 
-    image = tf.image.decode_jpeg(file.read(), channels=3)  # Assuming RGB image
-    image = tf.image.resize(image, target_size)
-    image_array = tf.keras.preprocessing.image.img_to_array(image)
-
-    image_array = np.expand_dims(image_array, axis=0)
-    image_array = preprocess_input(image_array)
+    image = load_img(file_path, target_size=(224, 224))
+    image = img_to_array(image)
+    image = np.expand_dims(image, axis=0)
+    image = preprocess_input(image)
 
     # Make predictions on the image
-    predictions = model.predict(image_array)
+    predictions = model.predict(image)
     predicted_class_index = np.argmax(predictions[0])
 
     # Print the predicted class index
