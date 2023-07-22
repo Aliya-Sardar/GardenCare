@@ -11,7 +11,7 @@ def recognize(image_data):
 
     # Load the TFLite model and allocate tensors.
     directory_path = os.path.dirname(__file__)
-    file_path = os.path.join(directory_path, 'TFlite_Model.tflite')
+    file_path = os.path.join(directory_path, 'resnet50_tfmodel.tflite')
     interpreter = tf.lite.Interpreter(model_path=file_path)
     interpreter.allocate_tensors()
 
