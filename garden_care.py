@@ -41,7 +41,7 @@ def recognize(image_data):
     output_tensor = interpreter.get_tensor(output_details[0]['index']).copy()
     predicted_class_index = np.argmax(output_tensor[0])
 
-    confidence = output_tensor[0][predicted_class_index]
+    confidence = float(output_tensor[0][predicted_class_index])
 
     # Return the predicted class
     predicted_class_label = class_names[predicted_class_index]
