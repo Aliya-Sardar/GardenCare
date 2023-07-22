@@ -30,8 +30,13 @@ def upload_file():
         }
          return jsonify(res)
      
-    predic = gc.recognize(file)
-    res={"message":"data retrieved successfully","data":{"disease_name":predic}}
+    predicted_class_label, confidence = gc.recognize(file)
+    res={"message":"data retrieved successfully",
+            "data":{
+                "disease_name": predicted_class_label,
+                "confidence": confidence
+                }
+        }
     return res
 
 
